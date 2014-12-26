@@ -1,10 +1,20 @@
+import math
+
 class Entity:
 
-    def __init__(self, x=0, y=0, xvelocity=0, yvelocity=0):
+    def __init__(self, x=0, y=0, velocity=0, direction=0):
         self._x = x
         self._y = y
-        self._xvelocity = xvelocity
-        self._yvelocity = yvelocity
+        self._velocity = velocity
+        self._direction = direction
+
+    @property
+    def direction(self):
+        return self._direction
+
+    @direction.setter
+    def direction(self, value):
+        self._direction = value
 
     @property
     def x(self):
@@ -23,21 +33,13 @@ class Entity:
         self._y = value
 
     @property
-    def xvelocity(self):
-        return self._xvelocity
+    def velocity(self):
+        return self._velocity
 
-    @xvelocity.setter
-    def xvelocity(self, value):
-        self._xvelocity = value
-
-    @property
-    def yvelocity(self):
-        return self._yvelocity
-
-    @yvelocity.setter
-    def yvelocity(self, value):
-        self._yvelocity = value
+    @velocity.setter
+    def velocity(self, value):
+        self._velocity = value
 
     def move(self):
-        self.x = self.x + self.xvelocity
-        self.y = self.y + self.yvelocity
+        self.x = self.x + self.velocity * math.cos(self.direction)
+        self.y = self.y + self.velocity * math.sin(self.direction)

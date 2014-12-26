@@ -8,6 +8,7 @@ from entities.bullet import Bullet
 from entities.ship import Ship
 from entities.enemy import Enemy
 from kivy.uix.widget import Widget
+import math
 
 Config.set('graphics', 'resizable', 0)
 
@@ -29,8 +30,8 @@ class Engine(Widget):
     def fire(self, dt):
         imageStr = './bullet.png'
         fired_bullet = Bullet(imageStr)
-        fired_bullet.xvelocity = 5
-        fired_bullet.x = self.ship.x + 40
+        fired_bullet.velocity = 5
+        fired_bullet.x = self.ship.x
         fired_bullet.y = self.ship.y
         self.bulletsList.append(fired_bullet)
         self.add_widget(fired_bullet)
@@ -42,9 +43,8 @@ class Engine(Widget):
         ypos = randint(1, 16)
         ypos = ypos * Window.height * .0625
         tmpEnemy.y = ypos
-        tmpEnemy.yvelocity = 0
-        vel = 30
-        tmpEnemy.xvelocity = -0.1 * vel
+        tmpEnemy.velocity = 10
+        tmpEnemy.direction = math.pi
         self.enemiesList.append(tmpEnemy)
         self.add_widget(tmpEnemy)
 
@@ -61,8 +61,7 @@ class Engine(Widget):
     def gameOver(self):
         Clock.unschedule(self.update)
         Clock.unschedule(self.fire)
-        self.xvelocity = 0
-        self.yvelocity = 0
+        self.velocity = 0
 
     def update(self, dt):
         self.ship.update()
@@ -81,8 +80,7 @@ class Engine(Widget):
                 self.gameOver()
                 Clock.unschedule(self.update)
             enemy.update()
-        self.ship.xvelocity = 0
-        self.ship.yvelocity = 0
+        self.ship.velocity = 0
 
 
 class MainApp(App):
@@ -93,7 +91,6 @@ class MainApp(App):
         Clock.schedule_interval(app.update, 1.0/60.0)
         parent.add_widget(app)
         return parent
-
 
 if __name__ == '__main__':
     MainApp().run()
