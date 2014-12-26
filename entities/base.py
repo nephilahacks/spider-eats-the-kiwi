@@ -1,10 +1,12 @@
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.graphics import Ellipse
+from engine.entity import Entity
 
-class BaseEntity(Widget):
+class BaseEntity(Widget, Entity):
     def __init__(self, imageStr, **kwargs):
-        super(BaseEntity, self).__init__(**kwargs)
+        Widget.__init__(self, **kwargs)
+        Entity.__init__(self)
         with self.canvas:
             self.size = (Window.width*.002*25, Window.width*.002*25)
             self.rect_bg = Ellipse(source=imageStr, pos=self.pos, size=self.size)

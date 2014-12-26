@@ -29,7 +29,7 @@ class Engine(Widget):
     def fire(self, dt):
         imageStr = './bullet.png'
         fired_bullet = Bullet(imageStr)
-        fired_bullet.velocity_x = 5
+        fired_bullet.xvelocity = 5
         fired_bullet.x = self.ship.x + 40
         fired_bullet.y = self.ship.y
         self.bulletsList.append(fired_bullet)
@@ -42,9 +42,9 @@ class Engine(Widget):
         ypos = randint(1, 16)
         ypos = ypos * Window.height * .0625
         tmpEnemy.y = ypos
-        tmpEnemy.velocity_y = 0
+        tmpEnemy.yvelocity = 0
         vel = 30
-        tmpEnemy.velocity_x = -0.1 * vel
+        tmpEnemy.xvelocity = -0.1 * vel
         self.enemiesList.append(tmpEnemy)
         self.add_widget(tmpEnemy)
 
@@ -61,8 +61,8 @@ class Engine(Widget):
     def gameOver(self):
         Clock.unschedule(self.update)
         Clock.unschedule(self.fire)
-        self.velocity_x = 0
-        self.velocity_y = 0
+        self.xvelocity = 0
+        self.yvelocity = 0
 
     def update(self, dt):
         self.ship.update()
@@ -81,8 +81,8 @@ class Engine(Widget):
                 self.gameOver()
                 Clock.unschedule(self.update)
             enemy.update()
-        self.ship.velocity_x = 0
-        self.ship.velocity_y = 0
+        self.ship.xvelocity = 0
+        self.ship.yvelocity = 0
 
 
 class MainApp(App):
