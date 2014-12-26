@@ -21,14 +21,14 @@ class Engine(Widget):
 
     def __init__(self, **kwargs):
         super(Engine, self).__init__(**kwargs)
-        self.ship = Ship(imageStr='./ship.jpg')
+        self.ship = Ship(imageStr='./assets/images/ship.jpg')
         self.ship.x = Window.width / 4
         self.ship.y = Window.height / 2
         self.add_widget(self.ship)
         Clock.schedule_interval(self.fire, 5.0/60.0)
 
     def fire(self, dt):
-        imageStr = './bullet.png'
+        imageStr = './assets/images//bullet.png'
         fired_bullet = Bullet(imageStr)
         fired_bullet.velocity = 5
         fired_bullet.x = self.ship.x
@@ -37,7 +37,7 @@ class Engine(Widget):
         self.add_widget(fired_bullet)
 
     def addEnemy(self):
-        imageStr = './enemy.png'
+        imageStr = './assets/images/enemy.png'
         tmpEnemy = Enemy(imageStr)
         tmpEnemy.x = Window.width * 0.99
         ypos = randint(1, 16)
