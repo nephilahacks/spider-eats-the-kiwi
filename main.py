@@ -1,85 +1,17 @@
 from kivy.app import App
-from kivy.uix.widget import Widget
 from kivy.core.window import Window
-from kivy.properties import NumericProperty
 from kivy.clock import Clock
 from kivy.graphics import Ellipse
 from random import randint
 from kivy.config import Config
+from entities.bullet import Bullet
+from entities.ship import Ship
+from entities.enemy import Enemy
+from kivy.uix.widget import Widget
 
 Config.set('graphics', 'resizable', 0)
 
 Window.clearcolor = (0, 0, 0, 1.)
-
-
-class BaseEntity(Widget):
-    def __init__(self, imageStr, **kwargs):
-        super(BaseEntity, self).__init__(**kwargs)
-        with self.canvas:
-            self.size = (Window.width*.002*25, Window.width*.002*25)
-            self.rect_bg = Ellipse(source=imageStr, pos=self.pos, size=self.size)
-            self.bind(pos=self.update_graphics_pos)
-            self.x = self.center_x
-            self.y = self.center_y
-            self.pos = (self.x, self.y)
-            self.rect_bg.pos = self.pos
-
-    def update_graphics_pos(self, instance, value):
-        self.rect_bg.pos = value
-
-        def setSize(self, width, height):
-            self.size = (width, height)
-
-        def setPos(xpos, ypos):
-            self.x = xpos
-            self.y = ypos
-
-
-class Bullet(BaseEntity):
-    velocity_x = NumericProperty(0)
-    velocity_y = NumericProperty(0)
-
-    def move(self):
-        self.x = self.x + self.velocity_x
-        self.y = self.y + self.velocity_y
-
-    def update(self):
-        self.move()
-
-
-class Enemy(BaseEntity):
-    velocity_x = NumericProperty(0)
-    velocity_y = NumericProperty(0)
-
-    def move(self):
-        self.x = self.x + self.velocity_x
-        self.y = self.y + self.velocity_y
-
-    def update(self):
-        self.move()
-
-
-class Ship(BaseEntity):
-
-    impulse = 3
-
-    velocity_x = NumericProperty(0)
-    velocity_y = NumericProperty(0)
-
-    def move(self):
-        self.x = self.x + self.velocity_x
-        self.y = self.y + self.velocity_y
-
-        if self.y < Window.height * 0.95:
-            self.impulse = -3
-
-    def determineVelocity(self):
-        self.impulse = 0.95 * self.impulse
-
-    def update(self):
-        self.determineVelocity()
-        self.move()
-
 
 class Engine(Widget):
     enemiesList = []
