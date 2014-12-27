@@ -16,6 +16,9 @@ class BaseEntity(Widget, Entity):
             self.pos = (self.x, self.y)
             self.rect_bg.pos = self.pos
 
+    def update(self):
+        self.move()
+
     def update_graphics_pos(self, instance, value):
         self.rect_bg.pos = value
 
