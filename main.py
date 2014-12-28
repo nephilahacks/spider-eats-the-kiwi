@@ -7,6 +7,7 @@ from kivy.config import Config
 from entities.bullet import Bullet
 from entities.ship import Ship
 from entities.enemy import Enemy
+from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 import math
 
@@ -21,6 +22,10 @@ class Engine(Widget):
 
     def __init__(self, **kwargs):
         super(Engine, self).__init__(**kwargs)
+        self.score = Label(text='Score: 0')
+        self.score.x = 10
+        self.score.y = Window.height * 0.90
+        self.add_widget(self.score)
         self.ship = Ship(imageStr='./assets/images/ship.jpg')
         self.ship.x = Window.width / 4
         self.ship.y = Window.height / 2
@@ -30,7 +35,7 @@ class Engine(Widget):
     def fire(self, dt):
         imageStr = './assets/images//bullet.png'
         fired_bullet = Bullet(imageStr)
-        fired_bullet.velocity = 5
+        fired_bullet.velocity = 12
         fired_bullet.x = self.ship.x
         fired_bullet.y = self.ship.y
         self.bulletsList.append(fired_bullet)
@@ -43,7 +48,7 @@ class Engine(Widget):
         ypos = randint(1, 16)
         ypos = ypos * Window.height * .0625
         tmpEnemy.y = ypos
-        tmpEnemy.velocity = 10
+        tmpEnemy.velocity = 5
         tmpEnemy.direction = math.pi
         self.enemiesList.append(tmpEnemy)
         self.add_widget(tmpEnemy)
@@ -74,7 +79,19 @@ class Engine(Widget):
 
         for bullet in self.bulletsList:
             bullet.update()
-        for enemy in self.enemiesList:
+        for enemy in self.enemiesList[:]:
+            removed = False
+            for bullet in self.bulletsList[:]:
+                if enemy.collide_widget(bullet):
+                    self.bulletsList.remove(bullet)
+                    self.remove_widget(bullet)
+                    self.enemiesList.remove(enemy)
+                    self.remove_widget(enemy)
+                    removed = True
+                    self.score.text = ': '.join(("Score", str(int(self.score.text.split(":")[1]) + enemy.points)))
+                    break
+            if removed:
+                continue
             if enemy.collide_widget(self.ship):
                 print 'You lose'
                 self.gameOver()
