@@ -81,6 +81,7 @@ class Engine(Widget):
     def on_touch_move(self, touch):
         diff_x = touch.x -touch.ud["initial_pos"][0]
         diff_y = touch.y -touch.ud["initial_pos"][1]
+        # TODO: Improve ship movements, maybe slower
         self.ship.center_x = self.ship.center_x + diff_x * 0.60
         self.ship.center_y = self.ship.center_y + diff_y * 0.60
         touch.ud["initial_pos"] = (touch.x, touch.y)
@@ -101,6 +102,7 @@ class Engine(Widget):
         for bullet in self.bulletsList:
             if bullet.active:
                 bullet.update()
+        # TODO: Improve collision detection
         for enemy in self.enemiesList:
             removed = False
             if enemy.active:
@@ -117,6 +119,7 @@ class Engine(Widget):
                         if removed:
                             continue
                 if enemy.collide_widget(self.ship):
+                    # Make this appear ingame
                     print 'You lose'
                     self.gameOver()
                     Clock.unschedule(self.update)
@@ -126,6 +129,7 @@ class Engine(Widget):
 
 class MainApp(App):
     def build(self):
+        # TODO: Make a start menu
         self.title = 'Nephila Space Adventures'
         parent = Widget()
         app = Engine()
