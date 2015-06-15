@@ -11,13 +11,17 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 import math
 
+from collections import deque
+
 Config.set('graphics', 'resizable', 0)
 
 Window.clearcolor = (0, 0, 0, 1.)
 
 class Engine(Widget):
-    enemiesList = []
-    bulletsList = []
+    max_bullets = 50
+    max_enemies = 50
+    enemiesList = deque(maxlen=max_enemies)
+    bulletsList = deque(maxlen=max_bullets)
     minProb = 1700
 
     def __init__(self, **kwargs):
@@ -33,25 +37,43 @@ class Engine(Widget):
         Clock.schedule_interval(self.fire, 5.0/60.0)
 
     def fire(self, dt):
-        imageStr = './assets/images//bullet.png'
-        fired_bullet = Bullet(imageStr)
-        fired_bullet.velocity = 12
-        fired_bullet.x = self.ship.x
-        fired_bullet.y = self.ship.y
-        self.bulletsList.append(fired_bullet)
-        self.add_widget(fired_bullet)
+        fired_bullet = None
+        if len(self.bulletsList) <= self.bulletsList.maxlen:
+            imageStr = './assets/images//bullet.png'
+            fired_bullet = Bullet(imageStr)
+            self.bulletsList.append(fired_bullet)
+            fired_bullet.active = True
+        else:
+            for el in self.bulletsList:
+                if not el.active:
+                    el.active = True
+                    fired_bullet = el
+        if fired_bullet:
+            fired_bullet.velocity = 9
+            fired_bullet.x = self.ship.x
+            fired_bullet.y = self.ship.y
+            self.add_widget(fired_bullet)
 
     def addEnemy(self):
-        imageStr = './assets/images/enemy.png'
-        tmpEnemy = Enemy(imageStr)
-        tmpEnemy.x = Window.width * 0.99
-        ypos = randint(1, 16)
-        ypos = ypos * Window.height * .0625
-        tmpEnemy.y = ypos
-        tmpEnemy.velocity = 5
-        tmpEnemy.direction = math.pi
-        self.enemiesList.append(tmpEnemy)
-        self.add_widget(tmpEnemy)
+        tmpEnemy = None
+        if len(self.enemiesList) <= self.enemiesList.maxlen:
+            imageStr = './assets/images/enemy.png'
+            tmpEnemy = Enemy(imageStr)
+            self.enemiesList.append(tmpEnemy)
+            tmpEnemy.active = True
+        else:
+            for el in self.enemiesList:
+                if not el.active:
+                    el.active = True
+                    tmpEnemy = el
+        if tmpEnemy:
+            tmpEnemy.x = Window.width * 0.99
+            ypos = randint(1, 16)
+            ypos = ypos * Window.height * .0625
+            tmpEnemy.y = ypos
+            tmpEnemy.velocity = 5
+            tmpEnemy.direction = math.pi
+            self.add_widget(tmpEnemy)
 
     def on_touch_down(self, touch):
         touch.ud["initial_pos"] = (touch.x, touch.y)
@@ -59,8 +81,8 @@ class Engine(Widget):
     def on_touch_move(self, touch):
         diff_x = touch.x -touch.ud["initial_pos"][0]
         diff_y = touch.y -touch.ud["initial_pos"][1]
-        self.ship.center_x = self.ship.center_x + diff_x
-        self.ship.center_y = self.ship.center_y + diff_y
+        self.ship.center_x = self.ship.center_x + diff_x * 0.60
+        self.ship.center_y = self.ship.center_y + diff_y * 0.60
         touch.ud["initial_pos"] = (touch.x, touch.y)
 
     def gameOver(self):
@@ -76,27 +98,29 @@ class Engine(Widget):
             if self.minProb < 1300:
                 self.minProb = 1300
             self.minProb = self.minProb - 1
-
         for bullet in self.bulletsList:
-            bullet.update()
-        for enemy in self.enemiesList[:]:
+            if bullet.active:
+                bullet.update()
+        for enemy in self.enemiesList:
             removed = False
-            for bullet in self.bulletsList[:]:
-                if enemy.collide_widget(bullet):
-                    self.bulletsList.remove(bullet)
-                    self.remove_widget(bullet)
-                    self.enemiesList.remove(enemy)
-                    self.remove_widget(enemy)
-                    removed = True
-                    self.score.text = ': '.join(("Score", str(int(self.score.text.split(":")[1]) + enemy.points)))
-                    break
-            if removed:
-                continue
-            if enemy.collide_widget(self.ship):
-                print 'You lose'
-                self.gameOver()
-                Clock.unschedule(self.update)
-            enemy.update()
+            if enemy.active:
+                for bullet in self.bulletsList:
+                    if bullet.active:
+                        if enemy.collide_widget(bullet):
+                            self.remove_widget(bullet)
+                            self.remove_widget(enemy)
+                            bullet.active = False
+                            enemy.active = False
+                            removed = True
+                            self.score.text = ': '.join(("Score", str(int(self.score.text.split(":")[1]) + enemy.points)))
+                            break
+                        if removed:
+                            continue
+                if enemy.collide_widget(self.ship):
+                    print 'You lose'
+                    self.gameOver()
+                    Clock.unschedule(self.update)
+                enemy.update()
         self.ship.velocity = 0
 
 
