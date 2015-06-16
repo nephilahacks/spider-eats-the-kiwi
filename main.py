@@ -39,7 +39,7 @@ class Engine(Widget):
     def fire(self, dt):
         fired_bullet = None
         if len(self.bulletsList) <= self.bulletsList.maxlen:
-            imageStr = './assets/images//bullet.png'
+            imageStr = './assets/images/bullet.png'
             fired_bullet = Bullet(imageStr)
             self.bulletsList.append(fired_bullet)
             fired_bullet.active = True
