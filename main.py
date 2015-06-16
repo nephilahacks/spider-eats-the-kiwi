@@ -60,11 +60,9 @@ class Engine(Widget):
             imageStr = './assets/images/enemy.png'
             tmpEnemy = Enemy(imageStr)
             self.enemiesList.append(tmpEnemy)
-            tmpEnemy.active = True
         else:
             for el in self.enemiesList:
                 if not el.active:
-                    el.active = True
                     tmpEnemy = el
         if tmpEnemy:
             tmpEnemy.x = Window.width * 0.99
@@ -74,6 +72,7 @@ class Engine(Widget):
             tmpEnemy.velocity = 5
             tmpEnemy.direction = math.pi
             self.add_widget(tmpEnemy)
+            tmpEnemy.active = True
 
     def on_touch_down(self, touch):
         touch.ud["initial_pos"] = (touch.x, touch.y)
@@ -102,6 +101,9 @@ class Engine(Widget):
         for bullet in self.bulletsList:
             if bullet.active:
                 bullet.update()
+                if bullet.x > 800:
+                    bullet.active = False
+                    self.remove_widget(bullet)
         # TODO: Improve collision detection
         for enemy in self.enemiesList:
             removed = False
@@ -123,6 +125,9 @@ class Engine(Widget):
                     print 'You lose'
                     self.gameOver()
                     Clock.unschedule(self.update)
+                if enemy.x < -100:
+                    enemy.active = False
+                    self.remove_widget(enemy)
                 enemy.update()
         self.ship.velocity = 0
 
