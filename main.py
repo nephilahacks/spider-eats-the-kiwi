@@ -38,7 +38,7 @@ class Engine(Widget):
 
     def fire(self, dt):
         fired_bullet = None
-        if len(self.bulletsList) <= self.bulletsList.maxlen:
+        if len(self.bulletsList) < self.bulletsList.maxlen:
             imageStr = './assets/images/bullet.png'
             fired_bullet = Bullet(imageStr)
             self.bulletsList.append(fired_bullet)
@@ -56,7 +56,7 @@ class Engine(Widget):
 
     def addEnemy(self):
         tmpEnemy = None
-        if len(self.enemiesList) <= self.enemiesList.maxlen:
+        if len(self.enemiesList) < self.enemiesList.maxlen:
             imageStr = './assets/images/enemy.png'
             tmpEnemy = Enemy(imageStr)
             self.enemiesList.append(tmpEnemy)
