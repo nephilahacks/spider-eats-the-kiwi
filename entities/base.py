@@ -5,6 +5,7 @@ from engine.entity import Entity
 
 class BaseEntity(Widget, Entity):
     def __init__(self, imageStr, **kwargs):
+        self.active = False
         Widget.__init__(self, **kwargs)
         Entity.__init__(self)
         with self.canvas:
@@ -22,9 +23,9 @@ class BaseEntity(Widget, Entity):
     def update_graphics_pos(self, instance, value):
         self.rect_bg.pos = value
 
-        def setSize(self, width, height):
-            self.size = (width, height)
+    def setSize(self, width, height):
+        self.size = (width, height)
 
-        def setPos(xpos, ypos):
-            self.x = xpos
-            self.y = ypos
+    def setPos(xpos, ypos):
+        self.x = xpos
+        self.y = ypos
