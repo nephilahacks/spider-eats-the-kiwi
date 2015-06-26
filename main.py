@@ -13,6 +13,8 @@ import math
 
 from collections import deque
 
+__version__ = "1.0.1"
+
 Config.set('graphics', 'resizable', 0)
 
 Window.clearcolor = (0, 0, 0, 1.)
